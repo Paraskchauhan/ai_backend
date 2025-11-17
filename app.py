@@ -8,7 +8,7 @@ from model_utils import download_from_drive, load_yolo_model, WEIGHT_FILE
 app = FastAPI(title="YOLO API")
 
 # Put your Drive FILE_ID here or set as ENV variable on Render
-DRIVE_FILE_ID = os.getenv("DRIVE_FILE_ID", "https://drive.google.com/file/d/1y_4SxvfBQiCvG5KbewIu-fN-ctoYODng/view?usp=drive_link")
+DRIVE_FILE_ID = os.getenv("DRIVE_FILE_ID", "1y_4SxvfBQiCvG5KbewIu-fN-ctoYODng")
 
 # Globals
 MODEL = None

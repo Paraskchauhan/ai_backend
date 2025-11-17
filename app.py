@@ -18,7 +18,7 @@ async def startup_event():
     global MODEL
     # 1) download model if needed
     if not WEIGHT_FILE.exists():
-        if DRIVE_FILE_ID == "https://drive.google.com/file/d/1y_4SxvfBQiCvG5KbewIu-fN-ctoYODng/view?usp=drive_link" or not DRIVE_FILE_ID:
+        if DRIVE_FILE_ID == "1y_4SxvfBQiCvG5KbewIu-fN-ctoYODng" or not DRIVE_FILE_ID:
             raise RuntimeError("Set DRIVE_FILE_ID env var or put ID in code (change it).")
         download_from_drive(DRIVE_FILE_ID)
     # 2) load model

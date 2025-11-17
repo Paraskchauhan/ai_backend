@@ -2,49 +2,32 @@
 import os
 from pathlib import Path
 
-MODEL_DIR = Path("models")
-MODEL_DIR.mkdir(exist_ok=True)
-MODEL_PATH = MODEL_DIR / "yolo.pt"
+MODEL_LOCAL_PATH = Path("model_weights")
+MODEL_LOCAL_PATH.mkdir(exist_ok=True)
+WEIGHT_FILE = MODEL_LOCAL_PATH / "yolo.pt"
 
-def download_from_gdrive(file_id, out_path):
-    """Download using gdown (works for large files)."""
-    try:
-        import gdown
-    except ImportError:
-        raise Exception("gdown not installed. Add it to requirements.txt")
-    url = f"https://drive.google.com/uc?id={file_id}"
-    print(f"Downloading model from {url} to {out_path} ...")
-    gdown.download(url, str(out_path), quiet=False)
+def download_from_drive(drive_file_id):
+    # downloads only if not present
+    if WEIGHT_FILE.exists():
+        print("Model already exists locally:", WEIGHT_FILE)
+        return str(WEIGHT_FILE)
+    print("Downloading model from Google Drive...")
+    import gdown
+    url = f"https://drive.google.com/uc?id={drive_file_id}"
+    gdown.download(url, str(WEIGHT_FILE), quiet=False)
+    return str(WEIGHT_FILE)
 
-def load_model_from_file(model_path):
-    """Load YOLO model - adjust loader if you used a specific library."""
+def load_yolo_model(weight_path):
+    # using ultralytics loader or torch.hub for YOLOv5
     try:
+        # Try ultralytics (YOLOv8) if installed
+        from ultralytics import YOLO
+        model = YOLO(weight_path)
+        print("Loaded YOLO model with ultralytics.")
+        return model
+    except Exception:
         import torch
-        # Try ultralytics/YOLO approach first (modern)
-        try:
-            from ultralytics import YOLO
-            model = YOLO(str(model_path))
-            print("Loaded model with ultralytics.YOLO")
-            return model, "ultralytics"
-        except Exception:
-            # fallback to torch.hub (yolov5 style)
-            model = torch.hub.load('ultralytics/yolov5', 'custom', path=str(model_path), force_reload=False)
-            print("Loaded model with torch.hub (yolov5 custom)")
-            return model, "yolov5"
-    except Exception as e:
-        print("Model load error:", e)
-        raise
-
-def ensure_model(file_id_env_var="MODEL_GDRIVE_ID"):
-    """
-    Ensure model file exists locally; if not, download from Google Drive.
-    Returns (model_object, loader_type)
-    """
-    import os
-    file_id = os.getenv(file_id_env_var)
-    if not file_id:
-        raise Exception(f"Environment variable {file_id_env_var} not set (Google Drive file id).")
-    if not MODEL_PATH.exists():
-        download_from_gdrive(file_id, MODEL_PATH)
-    model, loader = load_model_from_file(MODEL_PATH)
-    return model, loader
+        # fallback to YOLOv5 hub (if weight compatible)
+        model = torch.hub.load('ultralytics/yolov5', 'custom', path=weight_path, force_reload=False)
+        print("Loaded YOLO model via torch.hub")
+        return model

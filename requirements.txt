@@ -1,6 +1,8 @@
-fastapi
-uvicorn[standard]
+flask
 torch
-gdown
+requests
+pillow
+pandas
+numpy
 opencv-python-headless
-ultralytics
+git+https://github.com/ultralytics/yolov5.git

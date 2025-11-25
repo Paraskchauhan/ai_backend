@@ -9,14 +9,12 @@ app = Flask(__name__)
 CORS(app)
 
 # Load YOLO model
-model = torch.load("model/best.pt", map_location="cpu")
+model = torch.load("best.pt", map_location="cpu")
 model.eval()
-
 
 @app.route("/")
 def home():
     return {"message": "Backend is running!"}
-
 
 @app.route("/predict", methods=["POST"])
 def predict():
@@ -39,7 +37,6 @@ def predict():
 
     except Exception as e:
         return jsonify({"error": str(e)})
-
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=10000)

@@ -10,7 +10,7 @@ app = Flask(__name__)
 CORS(app)
 
 # Load YOLOv5 Model
-model = torch.hub.load("ultralytics/yolov5", "custom", path="best.pt", force_reload=False)
+model = torch.hub.load("ultralytics/yolov5", "custom", path="best (1).pt", force_reload=False)
 model.eval()
 
 @app.route("/")
